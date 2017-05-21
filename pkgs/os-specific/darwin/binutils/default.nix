@@ -35,6 +35,9 @@ stdenv.mkDerivation {
     for i in ${stdenv.lib.concatStringsSep " " (builtins.map (e: prefix + e) cmds)}; do
       ln -sf "${cctools}/bin/$i" "$out/bin/$i"
     done
+    for i in dsymutil; do
+      ln -sf "${cctools}/bin/$i" "$out/bin/$i"
+    done
 
     for i in ${binutils-raw.dev or binutils-raw.out}/include/*.h; do
       ln -s "$i" "$out/include/$(basename $i)"

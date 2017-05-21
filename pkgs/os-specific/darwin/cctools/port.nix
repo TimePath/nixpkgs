@@ -60,6 +60,9 @@ let
       substituteInPlace cctools/include/Makefile \
         --replace "/bin/" ""
 
+      substituteInPlace cctools/as/driver.c \
+        --replace 'if(arch_name == NULL){' 'if (arch_name == NULL) {arch_name = "x86_64";} if(arch_name == NULL){'
+
       patchShebangs tools
       sed -i -e 's/which/type -P/' tools/*.sh
 
@@ -99,8 +102,11 @@ let
         chmod +x $out/bin/dsymutil
       ''
       else ''
+        . ${makeWrapper}/nix-support/setup-hook
+        wrapProgram "$out/bin/${targetPlatform.config}-as" \
+          --suffix PATH : ${stdenv.lib.makeBinPath [ clang ]}
         for tool in dyldinfo dwarfdump dsymutil; do
-          ${makeWrapper}/bin/makeWrapper "${maloader}/bin/ld-mac" "$out/bin/${targetPlatform.config}-$tool" \
+          makeWrapper "${maloader}/bin/ld-mac" "$out/bin/${targetPlatform.config}-$tool" \
             --add-flags "${xctoolchain}/bin/$tool"
           ln -s "$out/bin/${targetPlatform.config}-$tool" "$out/bin/$tool"
         done

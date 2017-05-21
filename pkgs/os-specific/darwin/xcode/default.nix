@@ -4,6 +4,10 @@ with stdenv.lib;
 
 let
   osxVersion = "10.9";
+  # this path comes from a manual install of an older version, because the current one segfaults
+  # nix-env -iA xpwn
+  # readlink `type -P xpwntool`
+  xpwn = "/nix/store/xj6bcqgn7wxidnj08yrmdbbhzr57lfc9-xpwn-0.5.8git";
 in stdenv.mkDerivation rec {
   name = "xcode-${version}";
   version = "5.1";

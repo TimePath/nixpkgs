@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, opencflite, clang, libcxx }:
+{ stdenv, fetchgit, opencflite, clang, libcxx, libcxxabi }:
 
 stdenv.mkDerivation {
   name = "maloader-0git";
@@ -6,7 +6,7 @@ stdenv.mkDerivation {
   src = fetchgit {
     url = "git://github.com/shinh/maloader.git";
     rev = "5f220393e0b7b9ad0cf1aba0e89df2b42a1f0442";
-    sha256 = "07j9b7n0grrbxxyn2h8pnk6pa8b370wq5z5zwbds8dlhi7q37rhn";
+    sha256 = "0dd1pn07x1y8pyn5wz8qcl1c1xwghyya4d060m3y9vx5dhv9xmzw";
   };
 
   postPatch = ''
@@ -14,10 +14,13 @@ stdenv.mkDerivation {
       -e '/if.*loadLibMac.*mypath/s|mypath|"'"$out/lib/"'"|' \
       -e 's|libCoreFoundation\.so|${opencflite}/lib/&|' \
       ld-mac.cc
+    substituteInPlace Makefile \
+      --replace "-Werror" "" \
+      ;
   '';
 
   NIX_CFLAGS_COMPILE = "-I${libcxx}/include/c++/v1";
-  buildInputs = [ clang libcxx ];
+  buildInputs = [ clang libcxx libcxxabi ];
   buildFlags = [ "USE_LIBCXX=1" "release" ];
 
   installPhase = ''

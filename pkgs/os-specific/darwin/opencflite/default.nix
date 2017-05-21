@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, icu, libuuid, tzdata }:
-
+{ stdenv, fetchurl, icu, libuuid, tzdata, utillinux, clang }:
+let libuuid = (utillinux.override { systemd = null; }).dev; in
 stdenv.mkDerivation rec {
   name = "opencflite-${version}";
   version = "476.19.0";
